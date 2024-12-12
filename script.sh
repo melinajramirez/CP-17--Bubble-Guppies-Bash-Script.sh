@@ -1,4 +1,5 @@
-#!/usr/bin/bash 
+#!/usr/bin/bash
+bool = true
 #Updates
 apt-get update
 apt-get upgrade
@@ -8,8 +9,6 @@ ufw enable
 ufw status
 #empty passwords
 sudo awk -F: '!$2 {print $1}' /etc/shadow 
-#setting the new password 
-sudo passwd <username>
 #denying empty passwords
 grep nullok /etc/pam.d/common-password
 #ensuring only users who need access to security functions are part of sudo group
@@ -23,16 +22,13 @@ systemctl status ctrl-alt-del.target
 ctrl-alt-del.target 
 Loaded: masked (Reason: Unit ctrl-alt-del.target is masked.) 
 Active: inactive (dead) 
-# remote X connections are disabled  
-sudo /usr/sbin/sshd -dd 2>&1 | awk '/filename/ {print $4}' | tr -d '\r' | tr '\n' ' ' | xargs sudo grep -iH 'x11forwarding' 
-/etc/ssh/sshd_config:X11Forwarding no 
 #not allow unattended or automatic login via SSH. 
 sudo /usr/sbin/sshd -dd 2>&1 | awk '/filename/ {print $4}' | tr -d '\r' | tr '\n' ' ' | xargs sudo grep -iEH '(permit(.*?)(passwords|environment))' 
 /etc/ssh/sshd_config:PermitEmptyPasswords no 
 /etc/ssh/sshd_config:PermitUserEnvironment no
 #requiring the change of at least eight characters when passwords are changed.
 grep -i difok /etc/security/pwquality.conf 
-difok = 8  
+     difok = 8  
 #minimum pass policy
 grep -i minlen /etc/security/pwquality.conf 
      minlen = 15 
@@ -56,3 +52,53 @@ grep -i pass_max_days /etc/login.defs
 #24 hours/one day minimum password lifetime restriction
 grep -i pass_min_days /etc/login.defs 
      PASS_MIN_DAYS    1 
+
+
+
+#password policies
+#audit policies
+#services
+#users
+names=()
+cat /etc/passwd
+while [bool = true]
+do
+     echo What user would you like to delete? Type "done" if done.
+     read input
+     if [ "input" == "done" ]; then
+          bool = false
+     else
+          names+=("input")
+     fi
+done
+for i in $($names)
+do
+     userdel -f $names
+done
+#user groups
+names=()
+getent group
+while [bool = true]
+do
+     echo Enter 1 to add a user to a group, 2 to create a group, 3 to delete a user from a group, 4 to delete a group, or done to continue the script.
+     read input
+     if [ "input" == "done" ]; then
+          bool = false
+     else if ["input" == "1"]; then
+          names+=("input")
+     else if
+          names+=("input")
+     else if
+          names+=("input")
+     else if
+          names+=("input")
+     fi
+done
+for i in $($names)
+do
+     userdel -f $names
+done
+#ports
+#updates
+apt-get update
+apt-get upgrade
